@@ -1,0 +1,18 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.log
+
+# Django SQLite DB
+db.sqlite3
+/media/
+
+# Environments
+.env
+venv/
+
+# VS Code and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
