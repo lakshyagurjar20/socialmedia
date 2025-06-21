@@ -5,6 +5,7 @@ from django.contrib import messages
 
 from django.contrib.auth.models import User
 from .models import Profile
+from django.shortcuts import render, redirect, get_object_or_404
 
 def signup_view(request):
     if request.method == 'POST':
@@ -42,7 +43,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def main_view(request):
     posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'main.html', {'posts': posts})
+    return render(request, 'main.html', {'posts': posts, 'user': request.user})
 
 
 from .forms import PostForm
@@ -87,3 +88,12 @@ from django.contrib.auth.decorators import login_required
 def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     return render(request, 'profile.html', {'profile': profile})
+
+from .models import Like
+
+@login_required
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    Like.objects.create(post=post, user=request.user)
+    return redirect('main')
+
