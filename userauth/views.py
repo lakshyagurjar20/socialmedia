@@ -173,7 +173,12 @@ def search_users(request):
             Q(username__icontains=query)
         ).exclude(id=request.user.id)
 
+    # List of users the current user is already following
+    following_user_ids = Follow.objects.filter(follower=request.user).values_list('following_id', flat=True)
+
     return render(request, 'search.html', {
         'query': query,
-        'results': results
+        'results': results,
+        'following_user_ids': following_user_ids
     })
+

@@ -11,6 +11,15 @@
   <div>
     <p>{{ user.username }}</p>
     <a href="{% url 'profile_view_other' user.username %}">View Profile</a>
+
+    <form method="post" action="{% url 'toggle_follow' user.username %}">
+      {% csrf_token %}
+      {% if user.id in following_user_ids %}
+        <button type="submit">Unfollow</button>
+      {% else %}
+        <button type="submit">Follow</button>
+      {% endif %}
+    </form>
   </div>
   <hr>
 {% empty %}
