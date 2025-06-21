@@ -39,4 +39,19 @@ from django.contrib.auth.decorators import login_required
 def main_view(request):
     return render(request, 'main.html')
 
-# Create your views here.
+from .forms import PostForm
+from .models import Post
+
+@login_required
+def upload_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user.username
+            post.save()
+            return redirect('main')
+    else:
+        form = PostForm()
+    return render(request, 'profile_upload.html', {'form': form})
+
