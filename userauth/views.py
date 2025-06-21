@@ -65,23 +65,21 @@ def upload_post(request):
 
 @login_required
 def profile_upload_view(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-
     if request.method == 'POST':
-        profile.bio = request.POST.get('bio', '')
-        profile.location = request.POST.get('location', '')
+        bio = request.POST.get('bio', '')
+        location = request.POST.get('location', '')
         profileimg = request.FILES.get('profileimg')
 
+        profile = Profile.objects.get(user=request.user)
+        profile.bio = bio
+        profile.location = location
         if profileimg:
             profile.profileimg = profileimg
-
         profile.save()
-        return redirect('myprofile')  # Or 'main' if that’s your homepage
 
-    return render(request, 'profile_upload.html', {
-        'profile': profile
-    })
+        return redirect('main')
 
+    return render(request, 'profile_upload.html')
 from django.contrib.auth.decorators import login_required
 
 @login_required

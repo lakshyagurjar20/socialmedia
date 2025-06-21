@@ -1,17 +1,16 @@
-<h2>Edit Profile</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label>Bio:</label><br>
-    <textarea name="bio">{{ profile.bio }}</textarea><br><br>
+<h2>Upload Profile Info</h2>
 
-    <label>Location:</label><br>
-    <input type="text" name="location" value="{{ profile.location }}"><br><br>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  
+  <label>Bio:</label><br>
+  <textarea name="bio" rows="4" cols="50">{{ request.user.profile.bio }}</textarea><br><br>
 
-    <label>Profile Image:</label><br>
-    {% if profile.profileimg %}
-        <img src="{{ profile.profileimg.url }}" width="100"><br>
-    {% endif %}
-    <input type="file" name="profileimg"><br><br>
+  <label>Location:</label><br>
+  <input type="text" name="location" value="{{ request.user.profile.location }}"><br><br>
 
-    <button type="submit">Update</button>
+  <label>Profile Image:</label>
+  <input type="file" name="profileimg"><br><br>
+
+  <input type="submit" value="Upload">
 </form>
