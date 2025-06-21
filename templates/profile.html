@@ -1,14 +1,27 @@
-<h2>{{ user.username }}'s Profile</h2>
-<p>Bio: {{ profile.bio }}</p>
-<p>Location: {{ profile.location }}</p>
-<img src="{{ profile.profileimg.url }}" width="150px"><br><br>
+<h2>My Profile</h2>
 
-<h3>My Posts:</h3>
+<p><strong>Username:</strong> {{ profile.user.username }}</p>
+<p><strong>Bio:</strong> {{ profile.bio }}</p>
+<p><strong>Location:</strong> {{ profile.location }}</p>
+
+<p><strong>Followers:</strong>
+  <a href="{% url 'followers_list' request.user.username %}">
+    {{ followers_count }}
+  </a>
+</p>
+
+<p><strong>Following:</strong>
+  <a href="{% url 'following_list' request.user.username %}">
+    {{ following_count }}
+  </a>
+</p>
+
+
+<hr>
+<h3>Your Posts</h3>
 {% for post in posts %}
-  <div class="post">
-    <img src="{{ post.image.url }}" width="300px"><br>
+  <div>
+    <img src="{{ post.image.url }}" width="200px"><br>
     <p>{{ post.caption }}</p>
-    <p>{{ post.likes.count }} likes</p>
   </div>
-  <hr>
 {% endfor %}

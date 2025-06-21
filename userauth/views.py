@@ -92,7 +92,18 @@ from django.contrib.auth.decorators import login_required
 def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     user_posts = Post.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'profile.html', {'profile': profile, 'posts': user_posts})
+
+    followers = Follow.objects.filter(following=request.user)
+    following = Follow.objects.filter(follower=request.user)
+
+    return render(request, 'profile.html', {
+        'profile': profile,
+        'posts': user_posts,
+        'followers_count': followers.count(),
+        'following_count': following.count(),
+        'followers': followers,
+        'following': following,
+    })
 
 
 from django.shortcuts import redirect, get_object_or_404
@@ -132,11 +143,18 @@ def profile_view_other(request, username):
     user_posts = Post.objects.filter(user=target_user).order_by('-created_at')
     is_following = Follow.objects.filter(follower=request.user, following=target_user).exists()
 
+    followers = Follow.objects.filter(following=target_user)
+    following = Follow.objects.filter(follower=target_user)
+
     return render(request, 'profile_other.html', {
         'profile': profile,
         'posts': user_posts,
         'target_user': target_user,
-        'is_following': is_following
+        'is_following': is_following,
+        'followers_count': followers.count(),
+        'following_count': following.count(),
+        'followers': followers,
+        'following': following,
     })
 
 @login_required
@@ -182,3 +200,15 @@ def search_users(request):
         'following_user_ids': following_user_ids
     })
 
+@login_required
+def followers_list_view(request, username):
+    target_user = get_object_or_404(User, username=username)
+    followers = Follow.objects.filter(following=target_user)
+    return render(request, 'followers_list.html', {'target_user': target_user, 'followers': followers})
+
+
+@login_required
+def following_list_view(request, username):
+    target_user = get_object_or_404(User, username=username)
+    following = Follow.objects.filter(follower=target_user)
+    return render(request, 'following_list.html', {'target_user': target_user, 'following': following})

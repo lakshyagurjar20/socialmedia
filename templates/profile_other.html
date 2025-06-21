@@ -1,25 +1,66 @@
-{% load static %}
-<h2>{{ target_user.username }}</h2>
-<p>{{ profile.bio }}</p>
-<p>{{ profile.location }}</p>
+<!-- <h2>{{ target_user.username }}'s Profile</h2>
 
-<!-- Follow/Unfollow Button -->
-<form method="POST" action="{% url 'toggle_follow' target_user.username %}">
-    {% csrf_token %}
-    {% if is_following %}
-        <button type="submit">Unfollow</button>
-    {% else %}
-        <button type="submit">Follow</button>
-    {% endif %}
+<p><strong>Bio:</strong> {{ profile.bio }}</p>
+<p><strong>Location:</strong> {{ profile.location }}</p>
+
+<form method="post" action="{% url 'toggle_follow' target_user.username %}">
+  {% csrf_token %}
+  {% if is_following %}
+    <button type="submit">Unfollow</button>
+  {% else %}
+    <button type="submit">Follow</button>
+  {% endif %}
 </form>
 
-<h3>{{ target_user.username }}'s Posts</h3>
+<p><strong>Followers:</strong> {{ followers_count }}</p>
+<ul>
+  {% for f in followers %}
+    <li>{{ f.follower.username }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Following:</strong> {{ following_count }}</p>
+<ul>
+  {% for f in following %}
+    <li>{{ f.following.username }}</li>
+  {% endfor %}
+</ul>
+
+<hr>
+<h3>Posts</h3>
 {% for post in posts %}
-  <div class="post">
-    <img src="{{ post.image.url }}" width="300px"><br>
+  <div>
+    <img src="{{ post.image.url }}" width="200px"><br>
     <p>{{ post.caption }}</p>
-    <hr>
   </div>
-{% empty %}
-  <p>No posts yet.</p>
+{% endfor %} -->
+<h2>{{ target_user.username }}'s Profile</h2>
+
+<img src="{{ profile.profileimg.url }}" width="150px"><br>
+<p>Bio: {{ profile.bio }}</p>
+<p>Location: {{ profile.location }}</p>
+
+<!-- Just clickable text -->
+<p><strong>Followers</strong><a href="{% url 'followers_list' target_user.username %}">  {{ followers_count }}</a></p>
+<p><strong>Following</strong><a href="{% url 'following_list' target_user.username %}">  {{ following_count }}</a></p>
+
+{% if is_following %}
+  <form method="POST" action="{% url 'toggle_follow' target_user.username %}">
+    {% csrf_token %}
+    <button type="submit">Unfollow</button>
+  </form>
+{% else %}
+  <form method="POST" action="{% url 'toggle_follow' target_user.username %}">
+    {% csrf_token %}
+    <button type="submit">Follow</button>
+  </form>
+{% endif %}
+
+<h3>Posts:</h3>
+{% for post in posts %}
+  <div>
+    <img src="{{ post.image.url }}" width="300px">
+    <p>{{ post.caption }}</p>
+  </div>
+  <hr>
 {% endfor %}

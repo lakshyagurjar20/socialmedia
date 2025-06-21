@@ -1,0 +1,9 @@
+<h2>{{ target_user.username }} is Following</h2>
+<ul>
+  {% for follow in following %}
+    <li>{{ follow.following.username }}</li>
+  {% empty %}
+    <li>Not following anyone yet.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'profile_view' %}">← Back to Profile</a>
