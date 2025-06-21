@@ -1,0 +1,20 @@
+<h2>Search Users</h2>
+
+<form method="get" action="{% url 'search_users' %}">
+  <input type="text" name="q" placeholder="Search username..." value="{{ query }}">
+  <button type="submit">Search</button>
+</form>
+
+<hr>
+
+{% for user in results %}
+  <div>
+    <p>{{ user.username }}</p>
+    <a href="{% url 'profile_view_other' user.username %}">View Profile</a>
+  </div>
+  <hr>
+{% empty %}
+  {% if query %}
+    <p>No users found matching "{{ query }}".</p>
+  {% endif %}
+{% endfor %}

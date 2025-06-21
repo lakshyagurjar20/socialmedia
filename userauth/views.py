@@ -159,3 +159,21 @@ def unfollow_view(request, username):
         target_profile.followers.remove(request.user)
 
     return redirect('profile_view_user', username=username)
+
+from django.contrib.auth.models import User
+from django.db.models import Q
+
+@login_required
+def search_users(request):
+    query = request.GET.get('q', '')
+    results = []
+
+    if query:
+        results = User.objects.filter(
+            Q(username__icontains=query)
+        ).exclude(id=request.user.id)
+
+    return render(request, 'search.html', {
+        'query': query,
+        'results': results
+    })
