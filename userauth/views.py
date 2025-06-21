@@ -3,11 +3,15 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import SignUpForm
 from django.contrib import messages
 
+from django.contrib.auth.models import User
+from .models import Profile
+
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()  # Save user first
+            Profile.objects.create(user=user)  # Auto-create empty profile
             messages.success(request, 'Account created successfully!')
             return redirect('login')
     else:
@@ -55,5 +59,29 @@ def upload_post(request):
             return redirect('main')
     else:
         form = PostForm()
-    return render(request, 'profile_upload.html', {'form': form})
+    return render(request, 'upload_post.html', {'form': form})
 
+
+@login_required
+def profile_upload_view(request):
+    if request.method == 'POST':
+        bio = request.POST.get('bio', '')
+        location = request.POST.get('location', '')
+        profileimg = request.FILES.get('profileimg')
+
+        profile = Profile.objects.get(user=request.user)
+        profile.bio = bio
+        profile.location = location
+        if profileimg:
+            profile.profileimg = profileimg
+        profile.save()
+
+        return redirect('main')
+
+    return render(request, 'profile_upload.html')
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def profile_view(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    return render(request, 'profile.html', {'profile': profile})

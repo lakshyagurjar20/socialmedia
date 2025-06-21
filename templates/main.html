@@ -2,7 +2,11 @@
 
 <h2>Welcome, {{ user.username }}!</h2>
 <a href="{% url 'logout' %}">Logout</a> |
-<a href="{% url 'upload' %}">Upload Post</a>
+<a href="{% url 'upload' %}">Upload Post</a> |
+<a href="{% url 'profile_upload' %}">Edit Profile</a> |
+<a href="{% url 'profile_view' %}">My Profile</a>
+
+
 
 <hr>
 

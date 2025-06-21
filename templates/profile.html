@@ -1,0 +1,8 @@
+<h1>Your Profile</h1>
+<img src="{{ profile.profileimg.url }}" width="200" height="200" alt="Profile Picture">
+<p><strong>Username:</strong> {{ profile.user.username }}</p>
+<p><strong>Email:</strong> {{ profile.user.email }}</p>
+<p><strong>Bio:</strong> {{ profile.bio }}</p>
+<p><strong>Location:</strong> {{ profile.location }}</p>
+
+<a href="{% url 'main' %}">Back to Feed</a>

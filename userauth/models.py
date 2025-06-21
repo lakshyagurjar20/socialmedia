@@ -9,6 +9,7 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
 import uuid
 from datetime import datetime
 
