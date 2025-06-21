@@ -42,8 +42,9 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def main_view(request):
-    posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'main.html', {'posts': posts, 'user': request.user})
+    posts = Post.objects.exclude(user=request.user).order_by('-created_at')
+    return render(request, 'main.html', {'posts': posts})
+
 
 
 from .forms import PostForm
@@ -85,13 +86,23 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
-    return render(request, 'profile.html', {'profile': profile})
+    user_posts = Post.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'profile.html', {'profile': profile, 'posts': user_posts})
 
-from .models import Like
+
+from django.shortcuts import redirect, get_object_or_404
+from .models import Post
+from django.contrib.auth.decorators import login_required
 
 @login_required
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    Like.objects.create(post=post, user=request.user)
-    return redirect('main')
+    user = request.user
+
+    if user in post.likes.all():
+        post.likes.remove(user)  # Dislike
+    else:
+        post.likes.add(user)     # Like
+
+    return redirect('main')  # Redirect back to feed
 

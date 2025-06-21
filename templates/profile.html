@@ -1,8 +1,14 @@
-<h1>Your Profile</h1>
-<img src="{{ profile.profileimg.url }}" width="200" height="200" alt="Profile Picture">
-<p><strong>Username:</strong> {{ profile.user.username }}</p>
-<p><strong>Email:</strong> {{ profile.user.email }}</p>
-<p><strong>Bio:</strong> {{ profile.bio }}</p>
-<p><strong>Location:</strong> {{ profile.location }}</p>
+<h2>{{ user.username }}'s Profile</h2>
+<p>Bio: {{ profile.bio }}</p>
+<p>Location: {{ profile.location }}</p>
+<img src="{{ profile.profileimg.url }}" width="150px"><br><br>
 
-<a href="{% url 'main' %}">Back to Feed</a>
+<h3>My Posts:</h3>
+{% for post in posts %}
+  <div class="post">
+    <img src="{{ post.image.url }}" width="300px"><br>
+    <p>{{ post.caption }}</p>
+    <p>{{ post.likes.count }} likes</p>
+  </div>
+  <hr>
+{% endfor %}

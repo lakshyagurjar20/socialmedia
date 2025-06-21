@@ -1,4 +1,3 @@
-
 {% load static %}
 {% load post_extras %}
 
@@ -11,7 +10,6 @@
 <hr>
 
 <!-- templates/main.html -->
-
 {% for post in posts %}
   <div class="post">
     <h3>{{ post.user.username }}</h3>
@@ -20,10 +18,14 @@
 
     <form method="POST" action="{% url 'like_post' post.id %}">
       {% csrf_token %}
-      <button type="submit">Like</button>
+      {% if user in post.likes.all %}
+        <button type="submit">Dislike</button>
+      {% else %}
+        <button type="submit">Like</button>
+      {% endif %}
     </form>
 
-    <p>{{ post.like_set.count }} likes</p>
+    <p>{{ post.likes.count }} likes</p>
   </div>
   <hr>
 {% endfor %}

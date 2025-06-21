@@ -1,11 +1,8 @@
 from django.contrib import admin
-from .models import Profile, Post
-from .models import Like
+from .models import Post, Profile
 
-admin.site.register(Like)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ['user', 'caption', 'created_at']
 
+admin.site.register(Post, PostAdmin)  # ✅ Keep this
 admin.site.register(Profile)
-admin.site.register(Post)
-
-
-# Register your models here.
