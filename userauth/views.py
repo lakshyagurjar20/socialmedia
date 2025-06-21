@@ -42,8 +42,13 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def main_view(request):
-    posts = Post.objects.exclude(user=request.user).order_by('-created_at')
+    from .models import Follow  # if not already imported
+
+    followed_users = Follow.objects.filter(follower=request.user).values_list('following', flat=True)
+    posts = Post.objects.filter(user__in=followed_users).order_by('-created_at')
+
     return render(request, 'main.html', {'posts': posts})
+
 
 
 
@@ -106,3 +111,51 @@ def like_post(request, post_id):
 
     return redirect('main')  # Redirect back to feed
 
+from .models import Follow
+
+@login_required
+def toggle_follow(request, username):
+    target_user = get_object_or_404(User, username=username)
+    if target_user == request.user:
+        return redirect('main')  # Cannot follow yourself
+
+    follow, created = Follow.objects.get_or_create(follower=request.user, following=target_user)
+    if not created:
+        follow.delete()  # Unfollow if already following
+    return redirect('profile_view_other', username=username)
+
+
+@login_required
+def profile_view_other(request, username):
+    target_user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=target_user)
+    user_posts = Post.objects.filter(user=target_user).order_by('-created_at')
+    is_following = Follow.objects.filter(follower=request.user, following=target_user).exists()
+
+    return render(request, 'profile_other.html', {
+        'profile': profile,
+        'posts': user_posts,
+        'target_user': target_user,
+        'is_following': is_following
+    })
+
+@login_required
+def follow_view(request, username):
+    target_user = get_object_or_404(User, username=username)
+    target_profile = Profile.objects.get(user=target_user)
+
+    if request.user != target_user:
+        target_profile.followers.add(request.user)
+
+    return redirect('profile_view_user', username=username)
+
+
+@login_required
+def unfollow_view(request, username):
+    target_user = get_object_or_404(User, username=username)
+    target_profile = Profile.objects.get(user=target_user)
+
+    if request.user != target_user:
+        target_profile.followers.remove(request.user)
+
+    return redirect('profile_view_user', username=username)

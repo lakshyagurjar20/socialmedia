@@ -2,10 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
-    profileimg = models.ImageField(upload_to='profile_images', default='blank-profile-picture.png')
     location = models.CharField(max_length=100, blank=True)
+    profileimg = models.ImageField(upload_to='profile_images/', default='default.png')
+    
+   
 
     def __str__(self):
         return self.user.username
@@ -36,5 +38,15 @@ class Like(models.Model):
     def __str__(self):
         return f"{self.user.username} liked {self.post.id}"
 
+from django.db import models
+from django.contrib.auth.models import User
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following_set')
+    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers_set')
+    followed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.follower.username} follows {self.following.username}"
 
 # Create your models here.

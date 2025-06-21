@@ -12,7 +12,8 @@
 <!-- templates/main.html -->
 {% for post in posts %}
   <div class="post">
-    <h3>{{ post.user.username }}</h3>
+    <h3><a href="{% url 'profile_view_other' post.user.username %}">{{ post.user.username }}</a></h3>
+
     <img src="{{ post.image.url }}" width="300px"><br>
     <p>{{ post.caption }}</p>
 
