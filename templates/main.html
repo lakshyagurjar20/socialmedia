@@ -1,4 +1,6 @@
+
 {% load static %}
+{% load post_extras %}
 
 <h2>Welcome, {{ user.username }}!</h2>
 <a href="{% url 'logout' %}">Logout</a> |
@@ -6,17 +8,22 @@
 <a href="{% url 'profile_upload' %}">Edit Profile</a> |
 <a href="{% url 'profile_view' %}">My Profile</a>
 
-
-
 <hr>
 
+<!-- templates/main.html -->
+
 {% for post in posts %}
-  <div style="margin-bottom:20px;">
-    <strong>{{ post.user }}</strong><br>
-    <img src="{{ post.image.url }}" alt="Post" width="300"><br>
+  <div class="post">
+    <h3>{{ post.user.username }}</h3>
+    <img src="{{ post.image.url }}" width="300px"><br>
     <p>{{ post.caption }}</p>
-    <small>{{ post.created_at }}</small>
+
+    <form method="POST" action="{% url 'like_post' post.id %}">
+      {% csrf_token %}
+      <button type="submit">Like</button>
+    </form>
+
+    <p>{{ post.like_set.count }} likes</p>
   </div>
-{% empty %}
-  <p>No posts yet.</p>
+  <hr>
 {% endfor %}

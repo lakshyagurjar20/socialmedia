@@ -9,5 +9,6 @@ urlpatterns = [
     path('upload/', views.upload_post, name='upload'),
     path('profile-upload/', views.profile_upload_view, name='profile_upload'),
     path('myprofile/', views.profile_view, name='profile_view'),
+    path('like/<int:post_id>/', views.like_post, name='like_post'),
 
 ]
