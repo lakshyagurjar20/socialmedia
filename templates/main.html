@@ -1,3 +1,16 @@
 <h2>Welcome, {{ user.username }}!</h2>
-<p>This is your homepage. More features coming soon...</p>
-<a href="{% url 'logout' %}">Logout</a>
+<a href="{% url 'logout' %}">Logout</a> |
+<a href="{% url 'upload' %}">Upload Post</a>
+
+<hr>
+
+{% for post in posts %}
+  <div style="margin-bottom:20px;">
+    <strong>{{ post.user }}</strong><br>
+    <img src="{{ post.image.url }}" alt="Post" width="300"><br>
+    <p>{{ post.caption }}</p>
+    <small>{{ post.created_at }}</small>
+  </div>
+{% empty %}
+  <p>No posts yet.</p>
+{% endfor %}

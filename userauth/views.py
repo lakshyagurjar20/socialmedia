@@ -37,7 +37,9 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def main_view(request):
-    return render(request, 'main.html')
+    posts = Post.objects.all().order_by('-created_at')
+    return render(request, 'main.html', {'posts': posts})
+
 
 from .forms import PostForm
 from .models import Post

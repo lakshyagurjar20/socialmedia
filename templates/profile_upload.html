@@ -1,0 +1,7 @@
+<h2>Upload Post</h2>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Post</button>
+</form>
+<a href="{% url 'main' %}">Back to Feed</a>
