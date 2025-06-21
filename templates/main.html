@@ -1,3 +1,5 @@
+{% load static %}
+
 <h2>Welcome, {{ user.username }}!</h2>
 <a href="{% url 'logout' %}">Logout</a> |
 <a href="{% url 'upload' %}">Upload Post</a>
