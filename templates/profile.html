@@ -22,7 +22,10 @@
   </style>
 </head>
 <body class="bg-light">
-
+  <a href="{% url 'main' %}" class="btn btn-light shadow-sm d-flex align-items-center gap-2 position-absolute m-3" style="top: 0; left: 0; z-index: 999; border-radius: 50px; padding: 0.4rem 0.9rem;">
+    <span style="font-size: 1.2rem;">&#8592;</span>
+  </a>
+  
 <div class="container py-5">
   <!-- Profile Header -->
   <div class="card p-4 shadow-sm mb-5">
@@ -43,8 +46,11 @@
         <strong>Following:</strong>
         <a href="{% url 'following_list' request.user.username %}" class="link-primary">{{ following_count }}</a>
       </p>
+  
+      
     </div>
   </div>
+  
 
   <h3 class="mb-4">🖼️ Your Posts</h3>
   <div class="row">
