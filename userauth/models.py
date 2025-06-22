@@ -27,7 +27,8 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts/')
     caption = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(User, related_name='likes', blank=True)
+    likes = models.ManyToManyField(User, related_name='post_set_liked', blank=True)
+
 
 
 

@@ -93,18 +93,21 @@ def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     user_posts = Post.objects.filter(user=request.user).order_by('-created_at')
 
+    # Get IDs of posts liked by the user
+    liked_post_ids = request.user.post_set_liked.values_list('id', flat=True)
+
     followers = Follow.objects.filter(following=request.user)
     following = Follow.objects.filter(follower=request.user)
 
     return render(request, 'profile.html', {
         'profile': profile,
         'posts': user_posts,
+        'liked_post_ids': liked_post_ids,
         'followers_count': followers.count(),
         'following_count': following.count(),
         'followers': followers,
         'following': following,
     })
-
 
 from django.shortcuts import redirect, get_object_or_404
 from .models import Post
