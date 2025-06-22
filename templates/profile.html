@@ -19,12 +19,23 @@
       object-fit: cover;
       border-radius: 8px;
     }
+    .back-button {
+      transition: all 0.2s ease-in-out;
+    }
+    .back-button:hover {
+      background-color: #ced4da;
+      transform: scale(1.05);
+    }
   </style>
+  
 </head>
-<body class="bg-light">
-  <a href="{% url 'main' %}" class="btn btn-light shadow-sm d-flex align-items-center gap-2 position-absolute m-3" style="top: 0; left: 0; z-index: 999; border-radius: 50px; padding: 0.4rem 0.9rem;">
-    <span style="font-size: 1.2rem;">&#8592;</span>
-  </a>
+<a href="{% url 'main' %}" 
+   class="btn btn-light shadow-sm d-flex align-items-center gap-2 position-absolute m-3 back-button"
+   style="top: 0; left: 0; z-index: 999; border-radius: 50px; padding: 0.4rem 0.9rem;"
+   title="Back" data-bs-toggle="tooltip">
+   <span style="font-size: 1.6rem;">&#8592;</span>
+</a>
+
   
 <div class="container py-5">
   <!-- Profile Header -->
@@ -79,5 +90,11 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Enable Bootstrap tooltips
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+</script>
+
 </body>
 </html>
