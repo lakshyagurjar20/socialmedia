@@ -215,3 +215,34 @@ def following_list_view(request, username):
     target_user = get_object_or_404(User, username=username)
     following = Follow.objects.filter(follower=target_user)
     return render(request, 'following_list.html', {'target_user': target_user, 'following': following})
+from django.http import HttpResponseForbidden
+
+@login_required
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if post.user != request.user:
+        return HttpResponseForbidden()
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('main')
+    else:
+        form = PostForm(instance=post)
+    
+    return render(request, 'edit_post.html', {'form': form, 'post': post})
+
+
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if post.user != request.user:
+        return HttpResponseForbidden()
+
+    if request.method == 'POST':
+        post.delete()
+        return redirect('main')
+    
+    return render(request, 'delete_post.html', {'post': post})
