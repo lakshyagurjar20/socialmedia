@@ -18,6 +18,7 @@ urlpatterns = [
     path('<str:username>/following/', views.following_list_view, name='following_list'),
     path('post/<int:post_id>/edit/', views.edit_post, name='edit_post'),
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
-    
+    path('post/<int:post_id>/', views.post_detail_view, name='post_detail'),
+
 
 ]

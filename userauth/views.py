@@ -40,16 +40,35 @@ def logout_view(request):
 
 from django.contrib.auth.decorators import login_required
 
+from .models import Post, Follow, Comment
+from .forms import PostForm, CommentForm
+
 @login_required
 def main_view(request):
-    from .models import Follow  # if not already imported
-
     followed_users = Follow.objects.filter(follower=request.user).values_list('following', flat=True)
     posts = Post.objects.filter(user__in=followed_users).order_by('-created_at')
 
-    return render(request, 'main.html', {'posts': posts})
+    comment_forms = {post.id: CommentForm() for post in posts}
+    post_comments = {
+        post.id: post.comments.order_by('-created_at')[:3]  # latest 3 comments
+        for post in posts
+    }
 
+    if request.method == 'POST' and 'comment_post_id' in request.POST:
+        post_id = int(request.POST.get('comment_post_id'))
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post_id = post_id
+            comment.user = request.user
+            comment.save()
+            return redirect('main')
 
+    return render(request, 'main.html', {
+        'posts': posts,
+        'comment_forms': comment_forms,
+        'post_comments': post_comments
+    })
 
 
 from .forms import PostForm
@@ -246,3 +265,28 @@ def delete_post(request, post_id):
         return redirect('main')
     
     return render(request, 'delete_post.html', {'post': post})
+from .models import Post, Comment
+from .forms import CommentForm
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def post_detail_view(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    comments = post.comments.all().order_by('-created_at')
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.user = request.user
+            comment.save()
+            return redirect('post_detail', post_id=post.id)
+    else:
+        form = CommentForm()
+
+    return render(request, 'post_detail.html', {
+        'post': post,
+        'form': form,
+        'comments': comments
+    })
