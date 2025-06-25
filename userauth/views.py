@@ -107,12 +107,16 @@ def profile_upload_view(request):
     return render(request, 'profile_upload.html')
 from django.contrib.auth.decorators import login_required
 
+from .models import Comment  # if not already imported
+
 @login_required
 def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     user_posts = Post.objects.filter(user=request.user).order_by('-created_at')
 
-    # Get IDs of posts liked by the user
+    # Dict: {post.id: [comments]}
+    post_comments = {post.id: Comment.objects.filter(post=post) for post in user_posts}
+
     liked_post_ids = request.user.post_set_liked.values_list('id', flat=True)
 
     followers = Follow.objects.filter(following=request.user)
@@ -122,11 +126,13 @@ def profile_view(request):
         'profile': profile,
         'posts': user_posts,
         'liked_post_ids': liked_post_ids,
+        'post_comments': post_comments,
         'followers_count': followers.count(),
         'following_count': following.count(),
         'followers': followers,
         'following': following,
     })
+
 
 from django.shortcuts import redirect, get_object_or_404
 from .models import Post
@@ -290,3 +296,12 @@ def post_detail_view(request, post_id):
         'form': form,
         'comments': comments
     })
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == 'POST':
+        text = request.POST.get('text')
+        if text:
+            Comment.objects.create(post=post, user=request.user, text=text)
+    return redirect(request.META.get('HTTP_REFERER', 'main'))
+

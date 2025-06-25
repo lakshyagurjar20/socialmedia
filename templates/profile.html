@@ -1,4 +1,6 @@
 {% load static %}
+{% load dict_filters %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,8 +29,8 @@
       transform: scale(1.05);
     }
   </style>
-  
 </head>
+
 <a href="{% url 'main' %}" 
    class="btn btn-light shadow-sm d-flex align-items-center gap-2 position-absolute m-3 back-button"
    style="top: 0; left: 0; z-index: 999; border-radius: 50px; padding: 0.4rem 0.9rem;"
@@ -36,7 +38,6 @@
    <span style="font-size: 1.6rem;">&#8592;</span>
 </a>
 
-  
 <div class="container py-5">
   <!-- Profile Header -->
   <div class="card p-4 shadow-sm mb-5">
@@ -60,11 +61,8 @@
         <strong>Following:</strong>
         <a href="{% url 'following_list' request.user.username %}" class="link-primary">{{ following_count }}</a>
       </p>
-  
-      
     </div>
   </div>
-  
 
   <h3 class="mb-4">🖼️ Your Posts</h3>
   <div class="row">
@@ -74,6 +72,8 @@
           <img src="{{ post.image.url }}" class="card-img-top post-img" alt="Post Image">
           <div class="card-body">
             <p class="card-text">{{ post.caption }}</p>
+
+            <!-- Like + Edit/Delete -->
             <div class="d-flex justify-content-between align-items-center">
               <form method="POST" action="{% url 'like_post' post.id %}">
                 {% csrf_token %}
@@ -83,7 +83,7 @@
                   <button type="submit" class="btn btn-primary btn-sm">Like</button>
                 {% endif %}
               </form>
-            
+
               {% if post.user == request.user %}
                 <div class="d-flex gap-2">
                   <a href="{% url 'edit_post' post.id %}" class="btn btn-warning btn-sm">Edit</a>
@@ -91,8 +91,31 @@
                 </div>
               {% endif %}
             </div>
-            
+
             <p class="mt-2 mb-0 text-muted">{{ post.likes.count }} likes</p>
+
+            <!-- 💬 Comments Section -->
+            <hr>
+            <h6 class="fw-semibold text-muted">Comments</h6>
+            {% with post_comments|dictkey:post.id as comments %}
+              {% for comment in comments %}
+                <div class="border-start ps-2 mb-2">
+                  <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+                </div>
+              {% empty %}
+                <p class="text-muted">No comments yet.</p>
+              {% endfor %}
+            {% endwith %}
+
+            <!-- New comment form -->
+            <form method="POST" action="{% url 'add_comment' post.id %}">
+              {% csrf_token %}
+              <div class="input-group input-group-sm mt-2">
+                <input type="text" name="text" class="form-control" placeholder="Write a comment..." required>
+                <button type="submit" class="btn btn-outline-primary btn-sm">Post</button>
+              </div>
+            </form>
+
           </div>
         </div>
       </div>
@@ -104,9 +127,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // Enable Bootstrap tooltips
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+  const tooltipList = [...tooltipTriggerList].map(t => new bootstrap.Tooltip(t));
 </script>
 
 </body>
