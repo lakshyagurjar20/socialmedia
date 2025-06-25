@@ -1,0 +1,22 @@
+{% extends 'main.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Chat with {{ other_user.username }}</h2>
+  <div class="border p-3 mb-3" style="height: 400px; overflow-y: scroll;">
+    {% for message in messages %}
+      <p>
+        <strong>{{ message.sender.username }}:</strong>
+        {{ message.content }}
+        <small class="text-muted">{{ message.timestamp|date:"M d, H:i" }}</small>
+      </p>
+    {% endfor %}
+  </div>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="input-group">
+      <input type="text" name="content" class="form-control" placeholder="Type your message..." required>
+      <button type="submit" class="btn btn-primary">Send</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

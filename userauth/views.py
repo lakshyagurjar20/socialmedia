@@ -305,3 +305,28 @@ def add_comment(request, post_id):
             Comment.objects.create(post=post, user=request.user, text=text)
     return redirect(request.META.get('HTTP_REFERER', 'main'))
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User
+from .models import Message
+
+@login_required
+def inbox(request):
+    users = User.objects.exclude(id=request.user.id)
+    return render(request, 'inbox.html', {'users': users})
+
+@login_required
+def chat_view(request, username):
+    other_user = get_object_or_404(User, username=username)
+    messages = Message.objects.filter(
+        sender__in=[request.user, other_user],
+        recipient__in=[request.user, other_user]
+    ).order_by('timestamp')
+
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            Message.objects.create(sender=request.user, recipient=other_user, content=content)
+            return redirect('chat_view', username=username)
+
+    return render(request, 'chat.html', {'other_user': other_user, 'messages': messages})

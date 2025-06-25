@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2>📨 Your Inbox</h2>
+  <ul class="list-group">
+    {% for user in users %}
+      <li class="list-group-item">
+        <a href="{% url 'chat_view' user.username %}">
+          {{ user.username }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

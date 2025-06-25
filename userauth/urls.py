@@ -20,6 +20,8 @@ urlpatterns = [
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
     path('post/<int:post_id>/', views.post_detail_view, name='post_detail'),
     path('comment/<int:post_id>/', views.add_comment, name='add_comment'),
+    path('inbox/', views.inbox, name='inbox'),
+    path('chat/<str:username>/', views.chat_view, name='chat_view'),
 
 
 ]
